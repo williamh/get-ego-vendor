@@ -11,6 +11,7 @@ import (
 )
 
 func convertVersion(v string) string {
+	v = strings.TrimSuffix(v, "+incompatible")
 	pseudoVersionForms := []string {
 		`^v[0-9]+\.0\.0-[0-9]+-[[:xdigit:]]+$`,
 		`^v[0-9]+\.[0-9]+\.[0-9]+-pre\.0\.[0-9]+-[[:xdigit:]]+$`,
