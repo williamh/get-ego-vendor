@@ -12,7 +12,7 @@ import (
 
 func convertVersion(v string) string {
 	v = strings.TrimSuffix(v, "+incompatible")
-	pseudoVersionForms := []string {
+	pseudoVersionForms := []string{
 		`^v[0-9]+\.0\.0-[0-9]+-[[:xdigit:]]+$`,
 		`^v[0-9]+\.[0-9]+\.[0-9]+-pre\.0\.[0-9]+-[[:xdigit:]]+$`,
 		`^v[0-9]+\.[0-9]+\.[0-9]+-0.[0-9]+-[[:xdigit:]]+$`,
@@ -21,7 +21,7 @@ func convertVersion(v string) string {
 		match, _ := regexp.MatchString(pv, v)
 		if match {
 			pos := strings.LastIndex(v, "-")
-			if pos + 1 < len(v) {
+			if pos+1 < len(v) {
 				return v[pos+1:]
 			} else {
 				return ""
