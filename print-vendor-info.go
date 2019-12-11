@@ -9,17 +9,37 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
+	"regexp"
 	"strings"
 )
 
-func findRepo(importPath string) string {
+func findRepo(importPath string, required bool) string {
 	repo := ""
-	if strings.HasPrefix(importPath, "github.com/") {
-		return repo
-	}
 	resp, err := http.Get("https://" + importPath + "?go-get=1")
 	checkError(err)
 	defer resp.Body.Close()
+
+	// If we get a 404 then we check to see if we have a versioned uri
+	// i.e. github.com/minio/gokrb5/v7
+	// Then we try to check for the v[0-9] - if so then we rerun with
+	// the version removed
+
+	if resp.StatusCode == 404 {
+		base := path.Base(importPath)
+		if regexp.MustCompile(`^v[0-9]`).MatchString(base) {
+			return findRepo(path.Dir(importPath), true)
+		}
+	}
+
+	if strings.HasPrefix(importPath, "github.com/") {
+		if required {
+			return importPath
+		} else {
+			return repo
+		}
+	}
+
 	imports, err := parseMetaGoImports(resp.Body, IgnoreMod)
 	checkError(err)
 	for _, i := range imports {
@@ -28,6 +48,7 @@ func findRepo(importPath string) string {
 			break
 		}
 	}
+
 	repoUrl, err := url.Parse(repo)
 	checkError(err)
 	switch repoUrl.Host {
@@ -51,7 +72,7 @@ func printVendorInfo(s string) {
 	data := strings.Fields(s)
 	importPath := data[1]
 	version := convertVersion(data[2])
-	repo := findRepo(importPath)
+	repo := findRepo(importPath, false)
 	if len(repo) == 0 {
 		fmt.Printf("\t\"%s %s\"\n", importPath, version)
 	} else {
