@@ -26,7 +26,7 @@ func main() {
 		s := scanner.Text()
 		line := strings.Fields(s)
 		mod := line[0]
-		version := line [1]
+		version := line[1]
 		fmt.Printf("\t\"%s %s\"\n", mod, version)
 	}
 	fmt.Println(")")
