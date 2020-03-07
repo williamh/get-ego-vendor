@@ -29,7 +29,7 @@ func main() {
 		version := line[1]
 		fmt.Printf("\t\"%s %s\"\n", mod, version)
 	}
-	fmt.Println(")")
+	fmt.Printf("\t)\n")
 	fmt.Println("go-module_set_globals")
 	checkError(scanner.Err())
 }
