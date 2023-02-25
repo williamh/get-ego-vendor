@@ -1,3 +1,3 @@
 module github.com/williamh/get-ego-vendor
 
-go 1.12
+go 1.19
